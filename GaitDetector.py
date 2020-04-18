@@ -9,6 +9,11 @@ import numpy as np
 def getSamplingFrequency(dtime):
     return (1 / dtime)
 
+
+# Define variables
+BUFFER_FULL = False
+
+
 # Import healthy foot data from csv
 healthyFootGyroFile = "./Data/Test01_GyroXHealthyFoot.csv"
 data = np.loadtxt(open(healthyFootGyroFile, "rb"), dtype=float, delimiter=",", skiprows=1)
@@ -23,30 +28,39 @@ print("Sampling frequency = " + str(fs) + "Hz")
 
 # Create Buffers (Buf1: For healthy foot, Buf2: For affected foot)
 # BufferSize = 1/5 of the sampling frequency
-healthyBuf = cb(int((1/5) * fs))
-print("Buffer size = " + str(int((1/5) * fs)))
+healthyBuf = cb(int((1/10) * fs))
+print("Buffer size = " + str(int((1/10) * fs)))
 print(healthyBuf.maxSize)
 
 # Count used for debugging
-count = 0
-# Initially put a 0 as the first element in the buffer
-healthyBuf.enqueue(0)
+#count = 0
 
 # Loop through the data
 for i in range(0,len(time)):
-    if (healthyBuf.tail != healthyBuf.head):
-        # Fill buffer with latest gyro data
-        healthyBuf.enqueue(gyro[i])
-        count = count + 1
-        #print("Filling buf: Gryo = " + str(gyro[i]))
+    # Enqueue's (adds) data until buffer is full.  enqueue funciton returns false if the buffer is full.
+    # Buffer is full when tail = head - 1
+    if BUFFER_FULL == False :
+        if (healthyBuf.size() < healthyBuf.maxSize - 1):
+            # Fill buffer with latest gyro data
+            healthyBuf.enqueue(gyro[i])
+
+            #Debugging
+            #count = count + 1
+            #print("Filling buf: Gryo = " + str(gyro[i]))
+        else:
+            BUFFER_FULL = True
     else:
         # Begin calculations once buffer is full
         print("Buffer Full. Beginning calculations!")
+
+        # Begin TO and HC calculations
+        
+
         break
 
-print(count)
-print(healthyBuf.queue)
 
-
+# Debugging 
+#print(count)
+#print(healthyBuf.queue)
 
 

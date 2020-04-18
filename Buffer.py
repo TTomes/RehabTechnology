@@ -5,7 +5,7 @@
 class CircularBuffer:
 
     def __init__(self, cirBufferSize):
-        self.queue = list()
+        self.queue = list([0] * cirBufferSize)
         self.maxSize = cirBufferSize
         self.head = 0
         self.tail = 0
@@ -14,10 +14,11 @@ class CircularBuffer:
     def enqueue(self, data):
         # Check if queue is full before appending
         if self.size() == self.maxSize - 1:
+            print("BUFFER FULL")
             return False
 
-        # Add new data
-        self.queue.append(data)
+        # Add new data at the tail index
+        self.queue[self.tail] = (data)
         # Update tail position
         self.tail = (self.tail + 1) % self.maxSize
         # End funtion 
@@ -27,9 +28,9 @@ class CircularBuffer:
     def dequeue(self):
         # Check if queue is empty 
         if self.size() == 0:
-            return -1 # Queue is empty
+            print("BUFFER EMPTY")
+            return False # Queue is empty
         data = self.queue[self.head]
-        self.queue.pop(self.head)
         # Update head positon
         self.head = (self.head + 1) % self.maxSize
         # End funtion by returning updated data 
@@ -77,28 +78,9 @@ class CircularBuffer:
                 return True
         return False
 
-    #Calculating the size of the queue
+    # Calculating the size of the queue
     def size(self):
         if self.tail >= self.head:
             return (self.tail - self.head)
         else:
             return (self.maxSize - (self.head - self.tail))
-
-
-
-
-#buf = CircularBuffer(4)
-#print("Max Size: " + str(buf.maxSize))
-#buf.enqueue(0)
-#rint("Head: " + str(buf.head) + ", Tail: " + str(buf.tail))
-#buf.enqueue(1)
-#print("Head: " + str(buf.head) + ", Tail: " + str(buf.tail))
-#buf.enqueue(2)
-#print("Head: " + str(buf.head) + ", Tail: " + str(buf.tail))
-#print(buf.queue)
-#buf.enqueue(3)
-#print("Head: " + str(buf.head) + ", Tail: " + str(buf.tail))
-#print(buf.queue)
-#buf.enqueue(4)
-#print("Head: " + str(buf.head) + ", Tail: " + str(buf.tail))
-
