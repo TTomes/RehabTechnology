@@ -5,14 +5,26 @@
 from Buffer import CircularBuffer as cb
 import numpy as np
 
-# Functions
+
+# INITIALIZE FLAGS
+BUFFER_FULL = False # Used to fill buffer before calculations are made
+HC_FLAG = False     # Used for determining if a Heel Contact event is coming
+TO_FLAG = False     # Used for determining if a Toe Off event is coming
+LAST_EVENT = 1      # 1: Heel Contact, 4: Toe Off
+
+
+# Set threshold for gait detection algorithm [rad/s] ***MAY NEED CHANGED ON PERSON TO PERSON BASIS***
+THRESHOLD = 1 # rad/s
+
+
+# Useful Functions
 def getSamplingFrequency(dtime):
     return (1 / dtime)
 
 
-# Define variables
-BUFFER_FULL = False
 
+#######################################################################################################################
+# READING DATA FILES #
 
 # Import healthy foot data from csv
 healthyFootGyroFile = "./Data/Test01_GyroXHealthyFoot.csv"
@@ -26,41 +38,56 @@ gyro = data[:,1]
 fs = int(getSamplingFrequency(time[1]))
 print("Sampling frequency = " + str(fs) + "Hz")
 
+# END OF READING DATA FILES #
+#######################################################################################################################
+
+
+
 # Create Buffers (Buf1: For healthy foot, Buf2: For affected foot)
 # BufferSize = 1/5 of the sampling frequency
-healthyBuf = cb(int((1/10) * fs))
-print("Buffer size = " + str(int((1/10) * fs)))
+healthyBuf = cb(int((1/15) * fs))
+print("Buffer size = " + str(int((1/15) * fs)))
 print(healthyBuf.maxSize)
 
-# Count used for debugging
-#count = 0
 
-# Loop through the data
+# Simulate live data
 for i in range(0,len(time)):
-    # Enqueue's (adds) data until buffer is full.  enqueue funciton returns false if the buffer is full.
+    # Enqueue (add) data until buffer is full.  enqueue funciton returns false if the buffer is full.
     # Buffer is full when tail = head - 1
-    if BUFFER_FULL == False :
+    if BUFFER_FULL == False:
         if (healthyBuf.size() < healthyBuf.maxSize - 1):
-            # Fill buffer with latest gyro data
-            healthyBuf.enqueue(gyro[i])
+            
+            healthyBuf.enqueue(gyro[i]) # Fill buffer with latest gyro data
 
-            #Debugging
-            #count = count + 1
-            #print("Filling buf: Gryo = " + str(gyro[i]))
         else:
             BUFFER_FULL = True
-    else:
-        # Begin calculations once buffer is full
-        print("Buffer Full. Beginning calculations!")
+    else: # Begin calculations once buffer is full
 
-        # Begin TO and HC calculations
-        
+        # Delete oldest data point
+        healthyBuf.dequeue()
+        # Update the buffer with most recent data point
+        healthyBuf.enqueue(gyro[i])
 
-        break
+        # Toe Off Detection
+        if TO_FLAG == False:
+            if healthyBuf.avgValue() > THRESHOLD and healthyBuf.isAscending():
+                TO_FLAG = True
+        elif TO_FLAG == True: 
+            if healthyBuf.isDescending():
+                if LAST_EVENT == 1:
+                    print("TOE OFF AT: " + str(time[i]) + "     Index: " + str(i))
+                    LAST_EVENT = 4
+                TO_FLAG = False        
 
 
-# Debugging 
-#print(count)
-#print(healthyBuf.queue)
 
 
+
+# Test case (right before toe off event.  Toe off occurs at index 2530/2531)
+#data = gyro[2505:2531]
+#buf = cb(26)
+#for i in range(0,25):
+#    buf.enqueue(data[25 - i])
+
+
+#print(buf.isAscending())
