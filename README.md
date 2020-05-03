@@ -1,6 +1,6 @@
 # RehabTechnology
 
-<img src="images/UH2.png" width="400">
+<img src="images/UH2.png" width="500">
 
 ------------
 
