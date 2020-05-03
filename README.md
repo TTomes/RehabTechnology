@@ -6,7 +6,7 @@
 
 ### About The Project
 
-This project was the design and implementation of the Gait Detection Algorithm for the soft exoskeleton TrueStep, designed in Rehabilitation Engineering's course by Dr. Jose Luis Contreras-Vidal. This class was conducted in the University of Houston's College of Engineering, Spring 2020.
+This project was the design and implementation of the Gait Detection Algorithm for the soft exoskeleton TrueStep.  The goal of the exoskeleton is to alleviate foot drop in patients with gait disabilities due to strokes.  TrueStep was designed in the University of Houston's Rehabilitation Engineering course that is instructed by Dr. Jose Luis Contreras-Vidal. This class was conducted in the Cullen College of Engineering during the Spring 2020.
 
 ------------
 ### About Team Members
@@ -39,3 +39,26 @@ Only one sensor is needed for the algortihm to detect the state of the patients 
 ### Graphical overview of the algorithm
 
 <img src="images/AlgorithmOverview.PNG" width="600">
+
+------------
+
+### Data Collection Methods
+
+The first set of data was collected using the phyphox (physical phone experiments) app for Android.  The sampling freqnecy for the Gyroscoping data was locked at 400Hz. 
+
+The first trials (Test01_GyroXHealthyFoot.csv in the Data directory) was  
+
+
+The second set of data was collected using the Opal sensors placed in the same spot where the frequency was set to xHz.
+
+------------
+
+### Risk Management
+
+The biggest challenges in writing this algorithm are one, achieving an adequate accuracy of state detection and two, implementing robust risk management into the algorithm.  
+
+Increasing the accuracy of the state detection would immediately improve teh overall safety of the system.  This can be done by utilizing more data from the current sensor and/or using additional sensors.  
+
+For example: 
+
+
